@@ -25,25 +25,29 @@ const upload = multer({ storage: storage });
 
 // Resize, change quality, and format the image
 const processImage = async (buffer, options) => {
-    console.log('Received options:', options);
     let image = sharp(buffer);
+
     if (options.width && options.height) {
-        console.log('Resizing image to:', options.width, 'x', options.height);
         image = image.resize(options.width, options.height);
     }
 
-    if (options.quality) {
-        console.log('Setting image quality to:', options.quality);
+    if (options.quality && options.format === 'jpeg') {
         image = image.jpeg({ quality: options.quality });
     }
 
-    if (options.format) {
-        console.log('Converting image format to:', options.format);
-        image = image.toFormat(options.format);
+    if (options.format === 'png') {
+        image = image.png({ quality: options.quality });
     }
+
+    if (options.format === 'webp') {
+        image = image.webp({ quality: options.quality });
+    }
+
+    // Add additional format handling as needed
 
     return await image.toBuffer();
 };
+
 
 
 // API endpoint to handle image processing
@@ -58,21 +62,17 @@ app.post('/processImage', upload.single('image'), async (req, res) => {
         format: format
     };
 
-    console.log('Received options:', options);
-
 
     try {
         const processedBuffer = await processImage(buffer, options);
-        const fileExtension = options.format ? `.${options.format}` : '';
-        // Save processed image to MongoDB
+
+        // Save processed image to MongoDB with specified format
+        const filename = `${req.file.originalname.split('.')[0]}.${options.format}`; // Construct filename with specified format
         const image = new Image({
-            filename: req.file.originalname,
+            filename: filename,
             data: processedBuffer
         });
         await image.save();
-
-        // Determine file extension
-        
 
         // Return URL to view the processed image
         const imageUrl = `${req.protocol}://${req.get('host')}/images/${image._id}`;
@@ -102,7 +102,6 @@ app.get('/images/:id', async (req, res) => {
         res.status(500).send('Error fetching image');
     }
 });
-
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
