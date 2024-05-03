@@ -1,0 +1,64 @@
+{
+	"info": {
+		"_postman_id": "d3acebce-2c80-4668-9cb7-962e104d102b",
+		"name": "Exelon",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32939078"
+	},
+	"item": [
+		{
+			"name": "localhost:3000/processImage",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "width",
+							"value": "1000",
+							"type": "default"
+						},
+						{
+							"key": "height",
+							"value": "100",
+							"type": "default"
+						},
+						{
+							"key": "quality",
+							"value": "90",
+							"type": "default"
+						},
+						{
+							"key": "format",
+							"value": "webp",
+							"type": "default"
+						},
+						{
+							"key": "image",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/processImage",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"processImage"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
